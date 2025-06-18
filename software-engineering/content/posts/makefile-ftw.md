@@ -34,24 +34,25 @@ Before diving into the Whys and Hows, it seems reasonable to start with the What
 Now you ask: what is a Makefile?
 Makefile is a compilation recipe. 
 It is a set of rules and recipes to compile source code into binaries. 
-Not much more than that. 
+Not much more than that.
 It is language agnostic and can call shell commands alongside with anything available in the terminal.
 And it also has its own set of functions and helper tools.
-Simple as that.
+It doesn't require more than that.
 
 One of its magics is that it knows to only compile source code that is newer than its dependencies.
 From all forums and examples I've seen,
-it is popular with the C/C++ engineer and the folks that deal with this kind of low level stuff
-(seems like a smart crowd).
+it is popular with the C/C++ engineer and the folks that deal with this kind of low level stuff.
 Its roots go all the way to the early days of Unix, and it became the standard solution for managing complex compilation steps.
-Jump five decades into the future and the Makefiles are known as general purposes tools that can be used from development environment setup to deployment scripts.
-I'll cover some of its features and how they can be used in some different scenarios
+Now jump five decades into the future and the Makefiles are known as general purposes tools that can be used from development environment setup to deployment scripts.
+But before diving into its wide range of applications, 
+I'll cover some of its features and how they can be used in some different scenarios.
 
 ### A Very Brief Anatomy
 
-To understand how some ideas can be implemented with the Makefile, it is helpful to know some of its key components.
-The goal of this file is defining rules, that tell make how to compile a target file. 
-A rule might have some prerequisites and some commands:
+To understand how some ideas can be implemented with the Makefile, it is helpful to know some of its key elements.
+The goal of the makefile is defining rules, with recipes that tell make how to compile a target file. 
+A rule might have some prerequisites and some commands. 
+It looks like this:
 
 ```makefile
 target: prerequisite_one prerequisite_two
@@ -88,27 +89,30 @@ DIRS = $(dir $(SRC_FILES))
 ```
 
 This example doesn't even scratch the surface of what is possible to do, 
-and it is not my intention to write a tutorial. 
-Not now.  
+because it is not my intention to write a tutorial. 
+At least not now.  
 I just want to give the basic idea for someone who has never seen a Makefile, 
-hopefully next sections will leave you curious to learn more about it.    
+hopefully the next sections will leave you curious to learn more about it.    
 
 ## Whys and Hows
 
 Finally, the juicy stuff. 
-I tried to make a list of reasons for using Makefile everywhere, 
+I tried to make a list of short reasons for using Makefile everywhere, 
 but a list of bullet points didn't seem enough to grasp the value it brings to the table.
-Here I explain why each of these points matter and give a glimpse of how it can be achieved.
+So here I explain why each of these points matters and give a glimpse of how it can be done.
 Like I said, the goal isn't to make a tutorial.
 Knowing what is possible to be done, 
-now doesn't take too many AI prompts to get there or to find the right feature to implement yourself. 
+it won't take too many AI prompts to get there or to find the right feature documentation to implement by yourself. 
 
 ### Development Environment Setup
 
 As developers, 
 every once in a while we clone a new project and go through the dreadful process of reading a README file and hoping for the setup process to be as painless as it promises. 
-Best case scenario, it is a painless and boring time that every contributor of this project have been through. 
-Unfortunately, it is not unlikely that the best case scenario evolves to a worst case situation: the project changes and this README quietly becomes outdated. 
+Best case scenario, it is a painless and boring time that every contributor of this project has been through. 
+Unfortunately, it is not unlikely that the best case scenario degrades to a worst case situation: the project changes and this README quietly becomes outdated.
+After a while it becomes a time-consuming puzzle to get someone new to work in it, 
+requiring something that feels more like hacking than setting up a professional application.  
+
 That's the first place I see the Makefile being able to help: whenever its possible, the steps to setup the environment can be easily put in a executable target:
 
 ```Makefile
