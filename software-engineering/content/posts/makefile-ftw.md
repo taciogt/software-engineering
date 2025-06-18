@@ -11,19 +11,21 @@ title = 'Makefile Ftw'
 Early in my career I met a wise engineer (thanks Tony!) that cared about providing not only a decent README for the project we've worked, 
 but also a pretty good CLI to help with everyday tasks.
 We were a small start up with scarce resources,
-not much time to spare with complex onboardings and internal tools.
-It was way before we talked about Developer Experience around the water cooler, I didn't know a name for it but I could feel it mattered.
+without much time to spare with complex onboardings and internal tooling.
+And It was way before we talked about Developer Experience around the water cooler. 
+I didn't know we would have a cool name for it, but I could feel it mattered.
 
 For a young developer that struggled with almost everything, 
 this set of tools were enough to imprint in my engineering-related values the importance of making our life easier.
-Easier by not having to think all the time about every detail about the job 
-and easier by not having to explain for newcomers stuff that I didn't remember anymore. 
-Since then, I've always tried to have some tool like that regardless the project I'm dealing with.
+Easier by not having to think all the time about every detail required for getting the job done, 
+and easier by not having to explain for newcomers stuff that I've already forgotten. 
+Since then, I've always tried to use some tool like that regardless the project I'm dealing with.
 
-After a few years I joined a company that chose a Makefile to scratch the same itch. 
+After a few years,
+I joined a company that chose a Makefile to scratch the same itch.
 And I'm truly grateful for the engineer that made this decision. 
-Every now and then I learn a few Makefile trick and, long story short, I won't start a project without it anymore.
-These are the reasons why Makefile is a great tool for improving the developer experience way beyond the C/C++ stack.
+Now and then I still learn a new Makefile trick and, long story short, I won't start a project without it anymore.
+These are the reasons why I think Makefile is an awesome tool for improving the developer experience way beyond the C/C++ stack.
 These are the Whys and Hows to use it regardless of the stack you're dealing with.
 
 ## What
@@ -310,7 +312,26 @@ all: build lint test
 
 ### Flexibility
 
-Use the name of the target to do something
+Last, but not least, I came across one nice feature of Makefiles when working in a project with multiple applications.
+You can imagine it as anything between a monorepo and a single application with many interfaces, 
+like a set of api, cronjob, message consumer, etc.
+As the project grew, the list of rules kept growing with it, and at the same rate it grew I was getting annoyed by it. 
+It started to feel repetitive boilerplate work, like it could be better than that if I just knew how.
+And after some tinkering, I found how.
+
+But I won't show the approach I used back then.
+With the help from an AI, I can see how cumbersome it was. 
+Instead I'll suggest a simpler and straightforward one. 
+With rules like this it becomes easier to create multipurpose commands
+that allows the Makefile to support complex applications without having to increase it complexity at the same rate.   
+
+```makefile
+run/%:
+    npm run $*
+
+test/%:
+    npm test $*
+```
 
 ## Conclusions
 
