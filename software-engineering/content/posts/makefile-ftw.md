@@ -11,47 +11,49 @@ title = 'Makefile Ftw'
 Early in my career I met a wise engineer (thanks Tony!) that cared about providing not only a decent README for the project we've worked, 
 but also a pretty good CLI to help with everyday tasks.
 We were a small start up with scarce resources,
-without much time to spare with complex onboardings and internal tooling.
-And It was way before we talked about Developer Experience around the water cooler. 
+without much time to spare with complex onboardings or internal tooling.
+And It was way before we start talking about developer experience around the water cooler. 
 I didn't know we would have a cool name for it, but I could feel it mattered.
 
 For a young developer that struggled with almost everything, 
 this set of tools were enough to imprint in my engineering-related values the importance of making our life easier.
 Easier by not having to think all the time about every detail required for getting the job done, 
 and easier by not having to explain for newcomers stuff that I've already forgotten. 
-Since then, I've always tried to use some tool like that regardless the project I'm dealing with.
+Since then, I've always tried to use some tool like that regardless of the project I was dealing with.
 
 After a few years,
-I joined a company that chose a Makefile to scratch the same itch.
-And I'm truly grateful for the engineer that made this decision. 
+I joined a company that chose the Makefile to scratch the same itch.
+And I'm truly grateful for the engineer that made this decision, I think there's no match for it so far. 
 Now and then I still learn a new Makefile trick and, long story short, I won't start a project without it anymore.
 These are the reasons why I think Makefile is an awesome tool for improving the developer experience way beyond the C/C++ stack.
-These are the Whys and Hows to use it regardless of the stack you're dealing with.
+These are the Whys and Hows to use it in practically any stack you can think.
 
 ## What
 
-Before diving into the Whys and Hows, it seems reasonable to start with the What. 
-Now you ask: what is a Makefile?
+Before diving into the Whys and Hows, I think it is important to start with the What. 
+And what is a Makefile?
 Makefile is a compilation recipe. 
-It is a set of rules and recipes to compile source code into binaries. 
+It is a set of rules and prerequisites to compile source code into binaries. 
 Not much more than that.
-It is language agnostic and can call shell commands alongside with anything available in the terminal.
+It is language agnostic and can call anything from shell commands to whatever is available in the terminal.
 And it also has its own set of functions and helper tools.
-It doesn't require more than that.
+It doesn't seem much, but you won't need much more than that.
 
-One of its magics is that it knows to only compile source code that is newer than its dependencies.
-From all forums and examples I've seen,
-it is popular with the C/C++ engineer and the folks that deal with this kind of low level stuff.
-Its roots go all the way to the early days of Unix, and it became the standard solution for managing complex compilation steps.
-Now jump five decades into the future and the Makefiles are known as general purposes tools that can be used from development environment setup to deployment scripts.
-But before diving into its wide range of applications, 
-I'll cover some of its features and how they can be used in some different scenarios.
+One of its magics is that it knows to only compile the binaries when their dependencies change. 
+Its roots go all the way to the early days of Unix,
+and it became the standard solution for managing complex compilation steps. 
+That's why it is popular with the C/C++ engineers and the folks that deal with this kind of low level stuff.
+But this feature, and many more, can be used in all sort of scenarios, all the way to interpreted languages and beyond.
+Jump five decades into the future
+and the Makefiles are known as general purposes tools
+that can be used from development environment setup to deployment scripts.
 
 ### A Very Brief Anatomy
 
-To understand how some ideas can be implemented with the Makefile, it is helpful to know some of its key elements.
-The goal of the makefile is defining rules, with recipes that tell make how to compile a target file. 
-A rule might have some prerequisites and some commands. 
+To understand how some ideas can be implemented with the Makefile, 
+it is helpful to know some of its key elements and how they are organized.
+Like I said, the goal of the makefile is defining rules, with recipes that tell make how to compile a target file. 
+A rule might have some prerequisites and some commands, in any combination needed.
 It looks like this:
 
 ```makefile
@@ -61,9 +63,10 @@ target: prerequisite_one prerequisite_two
 ```
 
 When you run `make target`, 
-it checks if the prerequisites (which can refer to files or other targets) have been updated since last execution. 
+it checks if the prerequisites (which can refer to files or other targets) have been updated since its last execution. 
 If so, it runs the commands in its recipe.
-In this file, you can also define variables, use control flow structures, builtin functions, and more: 
+In this file, you can also define variables, use control flow structures, builtin functions, and more. 
+This is an example that gives a taste of :  
 
 ```makefile
 # variables
@@ -90,7 +93,7 @@ DIRS = $(dir $(SRC_FILES))
 
 This example doesn't even scratch the surface of what is possible to do, 
 because it is not my intention to write a tutorial. 
-At least not now.  
+At least not now. 
 I just want to give the basic idea for someone who has never seen a Makefile, 
 hopefully the next sections will leave you curious to learn more about it.    
 
