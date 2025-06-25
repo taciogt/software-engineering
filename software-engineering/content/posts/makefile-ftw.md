@@ -149,9 +149,9 @@ That's the first place I see the Makefile being able to help: whenever its possi
 
 ```Makefile
 setup:
-    brew install whatever
-    go install something
-    npm install -g another-thing
+	brew install whatever
+	go install something
+	npm install -g another-thing
   
 # For the purpose of this examples, I'm assuming a similar OS across all contributors. 
 # When it is not the case, some adaptations would be required.
@@ -194,13 +194,13 @@ I'll simulate a generic Node based application for this example, but it can be d
 
 ```Makefile
 setup:
-    npm install
+	npm install
     
 start:
-    npm start
+	npm start
     
 test:
-    npm test
+	npm test
 ```
 
 To make my life easier, I want to customize these targets so they work like this:
@@ -214,16 +214,16 @@ To achieve that, the Makefile becomes something like this:
 
 ```Makefile
 .setup.timestamp: Makefile package.json package.lock.json
-    npm install
-    @touch .setup.timestamp 
+	npm install
+	@touch .setup.timestamp 
 
 setup: .setup.timestamp
 
 start: setup
-    npm start
+	npm start
     
 test: setup
-    npm test
+	npm test
 ```
 
 Now it doesn't matter if it's the first time cloning the project or if you're pulling some changes that come with dependency upgrades,
