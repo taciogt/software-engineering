@@ -66,7 +66,7 @@ When you run `make target`,
 it checks if the prerequisites (which can refer to files or other targets) have been updated since its last execution. 
 If so, it runs the commands in its recipe.
 In this file, you can also define variables, use control flow structures, builtin functions, and more. 
-This is an example that gives a taste of :  
+This is an example that gives a taste of it:
 
 ```makefile
 # variables
@@ -89,13 +89,42 @@ endif
 # Builtin functions
 SRC_FILES = $(wildcard src/*.c)
 DIRS = $(dir $(SRC_FILES))
+
+# Default target
+all: build test lint
+
+# Build target with output directory
+build: deps
+	@echo "Building for version $(VERSION)..."
+	$(GOBUILD) -o $(BUILD_DIR)/app $(GCFLAGS) $(LDFLAGS) ./cmd/app
+
+# Run tests with coverage
+test: deps
+	@echo "Running tests..."
+	$(GOTEST) -cover -race ./...
+
+# Dependency management
+deps: go.mod go.sum
+	@echo "Ensuring dependencies..."
+	$(GOCMD) mod tidy
+	$(GOCMD) mod verify
+
+# Linting and code quality
+lint: deps
+	@echo "Linting code..."
+	golangci-lint run ./...
+
+# Clean build artifacts
+clean:
+	@echo "Cleaning build directory..."
+	rm -rf $(BUILD_DIR)/*
 ```
 
 This example doesn't even scratch the surface of what is possible to do, 
-because it is not my intention to write a tutorial. 
+but it is not my intention to write a tutorial. 
 At least not now. 
-I just want to give the basic idea for someone who has never seen a Makefile, 
-hopefully the next sections will leave you curious to learn more about it.    
+What i want is to give the basic idea for someone who has never seen a Makefile. 
+Hopefully the next sections will leave you curious to learn more about it.    
 
 ## Whys and Hows
 
@@ -104,8 +133,8 @@ I tried to make a list of short reasons for using Makefile everywhere,
 but a list of bullet points didn't seem enough to grasp the value it brings to the table.
 So here I explain why each of these points matters and give a glimpse of how it can be done.
 Like I said, the goal isn't to make a tutorial.
-Knowing what is possible to be done, 
-it won't take too many AI prompts to get there or to find the right feature documentation to implement by yourself. 
+By knowing what is possible to be done, 
+I assume it will take a few AI prompts to get there or to find the right feature explanation to implement by yourself. 
 
 ### Development Environment Setup
 
@@ -132,9 +161,98 @@ When the setup can be easily executed with a `make setup` command,
 it is easier to be updated because everyone is executing from the same source. 
 As the project setup changes, it is much easier to tell everyone just to rerun `make setup` than to give a list of detail steps to take and to make the README longer each time.       
 
-Even better, you can get by with not having to tell anyone about that. 
-That's where seamless actions and caching strategies come in hand to make the setup updates transparent for whoever is contributing to it.
-But since I mentioned the README a lot, it is worth mentioning how the Makefile can be an extension of it.
+Even better, you can avoid having to ask everyone on the team to run some new command after a PR is merged. 
+By setting the Makefile as a dependency of the setup target, the development environment is automatically updated when needed.
+This idea of setting specific dependencies for leveraging the cache management has a wide range of different applications.
+That's where seamless actions and caching strategies come in hand.
+
+### Seamless Updates and Caching Strategies
+
+To talk about caching strategies,
+I want to talk about my impressions working with Go and Typescript projects regarding its dependency management systems.
+
+When switching projects, I noticed that Go handles this with a seamless elegance that feels cumbersome in the standard Node solutions.
+I rarely need to manually download the dependencies when someone adds or upgrades a package in a Go project.
+Go just knows when something have changed and downloads it on the fly.
+I usually only know about that if I'm the one reviewing the PR, a lot of times dependency changes can go unnoticed. 
+
+But when I switch to a Typescript repository,
+I just run a `git pull` and try to run the project. 
+Like I do with Go. 
+If I'm lucky, I'll immediately get some error due to a missing package when starting the application.
+If I'm not so lucky, I'll get a runtime error after some time. 
+Then I'll wonder for a while until I remember the `npm install` I have forgotten. 
+In projects I'm not contributing in a daily basis, and with lots of contributors, it can happen a lot.
+
+Should I learn something from it?
+Yes.
+Did I?
+No.
+But I found a solution for this problem and a few more.
+To implement this solution, first I put my standard commands in a set of Makefile targets.
+I'll simulate a generic Node based application for this example, but it can be done with any type of project.
+
+```Makefile
+setup:
+    npm install
+    
+start:
+    npm start
+    
+test:
+    npm test
+```
+
+To make my life easier, I want to customize these targets so they work like this:
+* When I execute `make start`, it should run the setup instructions automatically
+* When I execute `make setup`, it should only do something if:
+  * It's the first time I'm calling it;
+  * Something have changed with `package.json` or `package.lock.json`;
+  * Something have changed with the `Makefile` itself.
+
+To achieve that, the Makefile becomes something like this:
+
+```Makefile
+.setup.timestamp: Makefile package.json package.lock.json
+    npm install
+    @touch .setup.timestamp 
+
+setup: .setup.timestamp
+
+start: setup
+    npm start
+    
+test: setup
+    npm test
+```
+
+Now it doesn't matter if it's the first time cloning the project or if you're pulling some changes that come with dependency upgrades,
+running `make start` is always enough and no one needs to manually run `npm install` anymore.
+One nice side-effect of this "seamlessness strategy" is making the CI pipeline simpler and easier to maintain.
+By declaring the target inter-dependencies, there's no need to manually run the setup steps in the CI pipeline.
+A simples `make test` should be enough.
+
+Going back to the Development Environment Setup, 
+setting up the Makefile as a dependency of the setup target can enable automatic changes to everyone.
+This makes it easier to keep everyone up to date with all recent changes in the project and allow for more dramatic changes to happen almost effortlessly.
+As an example, one can change the dependency manager of a project and apply this change without anyone having to know. 
+Taking the example from before, it could be done with something like this:
+
+```Makefile
+.setup.timestamp: Makefile package.json yarn.lock.json
+    npm install --global yarn
+    yarn install
+    @touch .setup.timestamp 
+
+setup: .setup.timestamp
+
+start: setup
+    yarn start
+    
+test: setup
+    yarn test
+```
+
 
 ### Brief Documentation
 
@@ -165,62 +283,7 @@ setup                Setups the local environment for development
 ```
 
 
-### Seamless Updates and Caching Strategies 
 
-To talk about caching strategies, 
-I want to talk about my impressions working with Go and Typescript projects regarding its dependency management systems.
-
-When switching projects, I noticed that Go handles this with a seamless elegance that feels cumbersome in the standard Node solutions. 
-I rarely need to manually download the dependencies when someone adds or upgrades a package in a Go project.
-Go just knows when something have changed and downloads it on the fly. 
-I only have to know about that if I'm the one reviewing the PR. 
-
-But when I switch back to a Typescript repository, 
-I'll just run a `git pull` and try to run the project. 
-If I'm lucky, I'll immediately get some error due to a missing package when starting the application. 
-If I'm not so lucky, I'll get a runtime error and wonder for a while until I remember the `npm install` I have forgotten. Every single time.
-
-Should I learn something from it?
-Yes.
-Did I?
-No. 
-But I found a solution, for this problem and a few more. 
-To implement this solution, first I put my standard commands in a set of Makefile targets. 
-I'll simulate a generic Node based application for this example, but it can be done with any type of project. 
-
-```Makefile
-setup:
-    npm install
-    
-start:
-    npm start
-```
-
-To make my life easier, I want to customize these targets so they work like this:
-* When I execute `make start`, it should run the setup instructions automatically  
-* When I execute `make setup`, it should only do something if:
-  * It's the first time I'm calling it;
-  * Something have changed with `package.json` or `package.lock.json`;
-  * Something have changed with the `Makefile` itself.
-
-To achieve that, the Makefile becomes something like this:
-
-```Makefile
-.setup.timestamp: Makefile package.json package.lock.json
-    npm install
-    @touch .setup.timestamp 
-
-setup: .setup.timestamp
-
-start: setup
-    npm start
-```
-
-Now it doesn't matter if it the first time cloning the project or if you're pulling some changes that with some minor dependency upgrades,
-running `make start` is always enough and no one needs to run `npm install` anymore. 
-One nice side-effect of this "seamlessness strategy" is making the CI pipeline simpler and easier to maintain.
-By declaring the target inter-dependencies, there's no need to manually run the setup steps in the CI pipeline. 
-A simples `make test` should be enough.  
 
 ### Language Agnostic
 
