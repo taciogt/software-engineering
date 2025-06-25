@@ -58,8 +58,8 @@ It looks like this:
 
 ```makefile
 target: prerequisite_one prerequisite_two
-    command_one
-    command_two
+	command_one
+	command_two
 ```
 
 When you run `make target`, 
@@ -81,9 +81,9 @@ BUILD_DIR ?= ./build
  
 # Control flow structures
 ifeq ($(DEBUG),1)
-    GCFLAGS = -gcflags="all=-N -l"
+	GCFLAGS = -gcflags="all=-N -l"
 else
-    LDFLAGS += -s -w
+	LDFLAGS += -s -w
 endif
 
 # Builtin functions
@@ -195,10 +195,10 @@ I'll simulate a generic Node based application for this example, but it can be d
 ```Makefile
 setup:
 	npm install
-    
+	
 start:
 	npm start
-    
+	
 test:
 	npm test
 ```
@@ -221,7 +221,7 @@ setup: .setup.timestamp
 
 start: setup
 	npm start
-    
+	
 test: setup
 	npm test
 ```
@@ -240,17 +240,17 @@ Taking the example from before, it could be done with something like this:
 
 ```Makefile
 .setup.timestamp: Makefile package.json yarn.lock.json
-    npm install --global yarn
-    yarn install
-    @touch .setup.timestamp 
+	npm install --global yarn
+	yarn install
+	@touch .setup.timestamp 
 
 setup: .setup.timestamp
 
 start: setup
-    yarn start
-    
+	yarn start
+	
 test: setup
-    yarn test
+	yarn test
 ```
 
 
@@ -317,23 +317,23 @@ If these differences are quite relevant,
 one quick solution is creating multiple targets and managing the reusable code as a shared dependency:
 
 ```makefile
-`setup/common:
-    npm install
-    
+setup/common:
+	npm install
+	
 setup/local: setup/common
-    # run some local authentication
+	# run some local authentication
 
 setup/ci: setup/common
-    # no-op: authentication is handled by a different action
+	# no-op: authentication is handled by a different action
 
 build/common: setup/common
-    npm build
+	npm build
 
 build/local: setup/local build/common
-    # no-op: the common build steps are enough 
-    
+	# no-op: the common build steps are enough 
+	
 build/ci: setup/ci build/common
-    # some extra steps for packaging the build `
+	# some extra steps for packaging the build
 ```
 
 On the other hand, 
@@ -347,7 +347,7 @@ and just set an environment variable when you need a different one.
 ENV ?= local
 
 build: 
-    npm build --env=$(ENV) 
+	npm build --env=$(ENV) 
 ```
 
 ### Composition
@@ -366,16 +366,16 @@ I created a command that runs some of them and set it as default.
 .DEFAULT_GOAL := all
 
 install:
-    # install dependencies
-    
+	# install dependencies
+	
 build: install
-    # build the application bundle
-    
+	# build the application bundle
+	
 test: install
-    # run the tests
-    
+	# run the tests
+	
 lint: install
-    # run the linter
+	# run the linter
  
 all: build lint test  
 ```
@@ -397,10 +397,10 @@ that allows the Makefile to support complex applications without having to incre
 
 ```makefile
 run/%:
-    npm run $*
+	npm run $*
 
 test/%:
-    npm test $*
+	npm test $*
 ```
 
 ## Conclusions
