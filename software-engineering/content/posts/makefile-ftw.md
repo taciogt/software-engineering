@@ -8,12 +8,12 @@ title = 'Makefile Ftw'
 
 ## Introduction
 
-Early in my career I met a wise engineer (thanks Tony!) that cared about providing not only a decent README for the project we've worked, 
+Early in my career I met a wise engineer that cared about providing not only a decent README for the project we've worked, 
 but also a pretty good CLI to help with everyday tasks.
 We were a small start up with scarce resources,
 without much time to spare with complex onboardings or internal tooling.
 And It was way before we start talking about developer experience around the water cooler. 
-I didn't know we would have a cool name for it, but I could feel it mattered.
+I couldn't know we would have a cool name for it, but I could feel it mattered.
 
 For a young developer that struggled with almost everything, 
 this set of tools were enough to imprint in my engineering-related values the importance of making our life easier.
@@ -26,7 +26,7 @@ I joined a company that chose the Makefile to scratch the same itch.
 And I'm truly grateful for the engineer that made this decision, I think there's no match for it so far. 
 Now and then I still learn a new Makefile trick and, long story short, I won't start a project without it anymore.
 These are the reasons why I think Makefile is an awesome tool for improving the developer experience way beyond the C/C++ stack.
-These are the Whys and Hows to use it in practically any stack you can think.
+And these are the Whys and Hows to use it in practically any stack you can think.
 
 ## What
 
@@ -35,7 +35,7 @@ And what is a Makefile?
 Makefile is a compilation recipe. 
 It is a set of rules and prerequisites to compile source code into binaries. 
 Not much more than that.
-It is language agnostic and can call anything from shell commands to whatever is available in the terminal.
+It is language agnostic and can call anything, from shell commands to whatever is available in the terminal.
 And it also has its own set of functions and helper tools.
 It doesn't seem much, but you won't need much more than that.
 
@@ -52,7 +52,7 @@ that can be used from development environment setup to deployment scripts.
 
 To understand how some ideas can be implemented with the Makefile, 
 it is helpful to know some of its key elements and how they are organized.
-Like I said, the goal of the makefile is defining rules, with recipes that tell make how to compile a target file. 
+Like I said, the goal of the Makefile is defining rules, with recipes that tell make how to compile a target file. 
 A rule might have some prerequisites and some commands, in any combination needed.
 It looks like this:
 
@@ -123,8 +123,8 @@ clean:
 This example doesn't even scratch the surface of what is possible to do, 
 but it is not my intention to write a tutorial. 
 At least not now. 
-What i want is to give the basic idea for someone who has never seen a Makefile. 
-Hopefully the next sections will leave you curious to learn more about it.    
+What I want to do is to give the basic idea for someone who has never seen a Makefile. 
+Hopefully the next sections will leave you curious to learn more about it.
 
 ## Whys and Hows
 
@@ -142,10 +142,12 @@ As developers,
 every once in a while we clone a new project and go through the dreadful process of reading a README file and hoping for the setup process to be as painless as it promises. 
 Best case scenario, it is a painless and boring time that every contributor of this project has been through. 
 Unfortunately, it is not unlikely that the best case scenario degrades to a worst case situation: the project changes and this README quietly becomes outdated.
-After a while it becomes a time-consuming puzzle to get someone new to work in it, 
-requiring something that feels more like hacking than setting up a professional application.  
+After a while it becomes a time-consuming puzzle to get someone new to run the application in a new machine, 
+requiring something that feels more like hacking than setting up an enterprise application.  
 
-That's the first place I see the Makefile being able to help: whenever its possible, the steps to setup the environment can be easily put in a executable target:
+That's the first place I see the Makefile being able to help: 
+whenever its possible, 
+the steps to setup the environment can be easily put in a executable target:
 
 ```Makefile
 setup:
@@ -158,11 +160,12 @@ setup:
 ```
 
 When the setup can be easily executed with a `make setup` command, 
-it is easier to be updated because everyone is executing from the same source. 
-As the project setup changes, it is much easier to tell everyone just to rerun `make setup` than to give a list of detail steps to take and to make the README longer each time.       
+it is easier to keep it updated because everyone is executing from the same source. 
+As the project setup changes, it is much easier to tell everyone just to rerun `make setup` again than to give a list of detailed steps to take. 
+Not to mention having to make the README longer each time.       
 
 Even better, you can avoid having to ask everyone on the team to run some new command after a PR is merged. 
-By setting the Makefile as a dependency of the setup target, the development environment is automatically updated when needed.
+By setting the Makefile file as a dependency of the setup target, the development environment is automatically updated when needed.
 This idea of setting specific dependencies for leveraging the cache management has a wide range of different applications.
 That's where seamless actions and caching strategies come in hand.
 
@@ -177,12 +180,11 @@ Go just knows when something have changed and downloads it on the fly.
 I usually only know about that if I'm the one reviewing the PR, a lot of times dependency changes can go unnoticed. 
 
 But when I switch to a Typescript repository,
-I just run a `git pull` and try to run the project. 
-Like I do with Go. 
+I just run a `git pull` and try to run the project, like I do with Go. 
 If I'm lucky, I'll immediately get some error due to a missing package when starting the application.
 If I'm not so lucky, I'll get a runtime error after some time. 
 Then I'll wonder for a while until I remember the `npm install` I have forgotten. 
-In projects I'm not contributing in a daily basis, and with lots of contributors, it can happen a lot.
+In projects I'm not contributing in a daily basis, and with lots of contributors, it happens more often than I'd like to admin.
 
 Should I learn something from it?
 Yes.
@@ -229,14 +231,14 @@ test: setup
 Now it doesn't matter if it's the first time cloning the project or if you're pulling some changes that come with dependency upgrades,
 running `make start` is always enough and no one needs to manually run `npm install` anymore.
 One nice side-effect of this "seamlessness strategy" is making the CI pipeline simpler and easier to maintain.
-By declaring the target inter-dependencies, there's no need to manually run the setup steps in the CI pipeline.
-A simples `make test` should be enough.
+By declaring the setup target as a dependency, there's no need to manually run the setup steps in the CI pipeline.
+A simples `make test` should be enough in any scenario, local or remote.
 
 Going back to the Development Environment Setup, 
 setting up the Makefile as a dependency of the setup target can enable automatic changes to everyone.
 This makes it easier to keep everyone up to date with all recent changes in the project and allow for more dramatic changes to happen almost effortlessly.
 As an example, one can change the dependency manager of a project and apply this change without anyone having to know. 
-Taking the example from before, it could be done with something like this:
+Taking the example from before, it could be done by updating the `Makefile` for something like this and pushing it to the repository:
 
 ```Makefile
 .setup.timestamp: Makefile package.json yarn.lock.json
@@ -253,16 +255,17 @@ test: setup
 	yarn test
 ```
 
-
 ### Brief Documentation
 
 We've all had the feeling that a project can only be as good as its documentation, 
 be it an application, a full featured framework, or even a small library.
 The same principle can be extended to the Makefile, and the good news is that it isn't hard to apply it.
-With a simple help target the Makefile can be self-documented. It eliminates the need to leave the terminal and open the Makefile or the README for remembering how to run the integration tests.  
+With a simple help target the Makefile can be self-documented. 
+It eliminates the need to leave the terminal and open the Makefile or the README for remembering how to run the integration tests.  
 
 The implementation of this isn't hard, but relies on some not so frequently used tools. 
-In the past I would search for some Stackoverflow answer to help with that, but now a simple prompt for an AI Agent can handle creating something like it:
+In the past I would search for some Stackoverflow answer to help with that, 
+but now a simple prompt for an AI Agent can handle creating something like it:
 
 ```makefile
 .DEFAULT_GOAL := help
@@ -271,7 +274,7 @@ help:	## Show this help
 	@grep -E '^[a-zA-Z_/-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
 ```
 
-Then all you need to do is adding this `## ...` comments after any target to get a help message like that:
+Then all you need to do is adding this `## ...` comments after any target to run `make` or `make help` and get an output like that:
 
 ```
 ❯ make
@@ -282,9 +285,6 @@ run                  Starts the local development server
 setup                Setups the local environment for development
 ```
 
-
-
-
 ### Language Agnostic
 
 As a generic tool, 
@@ -294,7 +294,7 @@ one can switch contexts between projects with less things to worry about.
 
 Personally, I found this characteristic useful even for navigating between projects on the same language, 
 but with different dependency management solutions (thanks, Node). 
-I keep forgetting which one uses npm, pnpm, or yarn, 
+I keep forgetting which project uses npm, pnpm, or yarn, 
 so I created a Makefile for all of them with the same set of `make start`, `make install` and `make test` targets.
 The same idea can also be extended for projects with same language, but different frameworks.
 
@@ -304,10 +304,11 @@ Having this kind of CLI tool has applications that go beyond helping forgetful d
 The tasks that must be run on the CI pipeline as well, can be easily put there with a simple `make <stuff>` call. 
 No need to copy the entire set of commands and try to remember the exact set of parameters when building the application.
 
-In my personal experience, the other way around isn't so rare as well: I implement in the Makefile something that I want to run in the CI pipeline. 
+In my personal experience, the other way around isn't so rare as well: 
+I implement in the Makefile something that I want to run in the CI pipeline. 
 With the Makefile it is easy to test the command locally until it is ready to be tested in the usually slower remote environment.
 It helps me troubleshooting a good amount of problems faster, 
-leaving to work on the CI steps just to fix some authentication or other environment setup issues.
+leaving to work on the CI environment mostly to fix some authentication issues or very specific configuration.
 
 ### Customization
 
@@ -337,7 +338,7 @@ build/ci: setup/ci build/common
 ```
 
 On the other hand, 
-if these differences seem more like alternative parameters for the same set of commands the conditional variable assignment can be very helpful.
+if these differences seem more like alternative parameters for the same set of commands, the conditional variable assignment can be very helpful.
 This works like an parameter with a default value that you can override in the places you have more control, 
 like the CI pipeline. 
 One way to do that is set the default value as the one to use for local development, 
@@ -354,13 +355,15 @@ build:
 
 After all these characteristics and different use cases for Makefile rules, 
 it is worth noticing how they can be composed to create some new tools with virtually zero effort.
-Seems like a something I have taken for granted, but looking back I couldn't do that so easily with other tools.
+Seems like something I have taken for granted, but looking back I couldn't do that so easily with other tools.
 
 One example on how to do that is for creating a rule to check if my local environment was properly set.
-When I was seting up a new project, I created a some Make rules for installing dependencies, 
+When I was seting up a new project, I created some Make rules for tasks like installing dependencies, 
 running the local server, building the bundle, running the testes, checking the linter, the whole deal.
 Instead of remembering to run each step to know that everything is good, 
-I created a command that runs some of them and set it as default.
+I created a command that runs most of them and set it as default. 
+I can use it to validate most of my CI pipeline steps before commiting, 
+or to run it after cloning the project to check it is working. 
 
 ```makefile
 .DEFAULT_GOAL := all
@@ -380,17 +383,30 @@ lint: install
 all: build lint test  
 ```
 
+### Error Handling and Validation
+
+Another thing that I've found useful is to have a set of rules that can be used to validate the environment before running the actual commands.
+This is useful for example when you want to make sure that you're not running a command that requires a specific version of a tool.
+
+```makefile
+check-node:
+    @command -v node >/dev/null 2>&1 || { echo "Node.js is required but not installed. Aborting." >&2; exit 1; }
+
+setup: check-node
+    npm install
+```
+
 ### Flexibility
 
 Last, but not least, I came across one nice feature of Makefiles when working in a project with multiple applications.
 You can imagine it as anything between a monorepo and a single application with many interfaces, 
 like a set of api, cronjob, message consumer, etc.
-As the project grew, the list of rules kept growing with it, and at the same rate it grew I was getting annoyed by it. 
-It started to feel repetitive boilerplate work, like it could be better than that if I just knew how.
-And after some tinkering, I found how.
+As the project grew, the list of rules kept growing with it, making it harder to navigate the Makefile. 
+It started to feel repetitive boilerplate work, felt like it could be better than that. 
+Only if I knew how. And after some tinkering, I found how.
 
 But I won't show the approach I used back then.
-With the help from an AI, I can see how cumbersome it was. 
+With the help from an AI Agent, I can see how cumbersome it was. 
 Instead I'll suggest a simpler and straightforward one. 
 With rules like this it becomes easier to create multipurpose commands
 that allows the Makefile to support complex applications without having to increase it complexity at the same rate.   
@@ -413,64 +429,11 @@ There's no need to apply all at once, so the learning curve can be very gentle f
 As you stack solutions together, it creates a compound effect bigger than the sum of its parts.
 And the knowledge acquired is far from being language specific. 
 
-Makefile is a long lasting solution in the industry and is natively available in most Operational Systems. 
-Due to its flexibility and useful set of composable features, 
+If you want suggestions on how to start, take any command you run in a daily basis and try to implement it with a Makefile.
+It can be something as simple as running the linter or executing the tests assuming that the dependencies are already setup.
+Then you can add some documentation and share it with the rest of the team and see how it goes. 
+Gradually add dependency management, caching strategies, and more.
+
+Makefile is a long lasting solution in the industry and is natively available in most Operational Systems.
+Due to its flexibility and useful set of composable features,
 it can be a great solution for improving the developer experience in a wide range of different tasks.
-
-
------- 
-
-Here are additional compelling reasons to include in your blog post about Makefiles:
-Project Standardization & Onboarding
-
-Creates a consistent interface across all projects (make test, make build, make deploy)
-New team members can immediately understand how to work with any project
-Reduces cognitive load when switching between different codebases
-
-Dependency Management & Orchestration
-
-Automatically handles complex build dependencies and prerequisites
-Can manage external tool installations and version checks
-Orchestrates multi-step processes (build → test → package → deploy)
-
-Development Environment Consistency
-
-Ensures all developers run commands with identical parameters
-Eliminates "works on my machine" problems
-Encapsulates environment-specific configurations
-
-Task Composition & Reusability
-
-Break complex workflows into smaller, composable targets
-Share common tasks across different projects via includes
-Create task hierarchies that build upon each other
-
-Performance Optimization
-
-Built-in parallelization with -j flag for independent tasks
-Intelligent rebuilding based on file timestamps
-Skip unnecessary work when outputs are already up-to-date
-
-Cross-Platform Compatibility
-
-Works identically on Linux, macOS, and Windows (with proper setup)
-Abstracts away OS-specific command differences
-Single source of truth for all platforms
-
-Integration Simplicity
-
-No additional runtime dependencies beyond make
-Works with any existing toolchain or framework
-Minimal learning curve for basic usage
-
-Debugging & Transparency
-
-Easy to see exactly what commands are being executed
-Built-in dry-run capability with -n flag
-Clear error reporting when tasks fail
-
-Legacy & Stability
-
-Battle-tested tool that's been around for decades
-Won't become obsolete or require migration
-Minimal maintenance overhead
